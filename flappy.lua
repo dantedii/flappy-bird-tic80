@@ -23,17 +23,25 @@ player={
 }
 
 function player:collision()
+	local ofset={x,y}
+	if self.motion.x >= 0 then
+		ofset.x=13 
+	else
+		ofset.x=0 
+	end
+	if self.motion.y > 0 then
+		ofset.y=13
+	else
+		ofset.y=0 
+	end
+	
 	local newpos={
-		x=self.pos.x+self.motion.x,
-		y=self.pos.y+self.pos.y
+		x=self.pos.x+self.motion.x+ofset.x,
+		y=self.pos.y+self.motion.y+ofset.y
 	}
 	local maptile=mget(newpos.x/8,newpos.y/8)
 	
-	if fget(maptile,0) then
-		return true
-	else
-		return false
-	end
+	return fget(maptile,0)
 	
 end
 
@@ -43,14 +51,14 @@ function player:frame()
 		if btnp(0) then
 			player.motion.y = -player.jump
 		end
-		--if player:collision() then
-		--	player.dead = true
-		--	player.motion.x=0
-		--	player.motion.y=0
-		--end
+		if player:collision() then
+			player.dead = true
+			player.motion.x=0
+			player.motion.y=0
+		end
 		player.pos.y = player.pos.y + player.motion.y
-		spr(player.sprite,player.pos.x,player.pos.y,11,1,0,0,2,2)
 	end
+	spr(player.sprite,player.pos.x,player.pos.y,11,1,0,0,2,2)
 end
 
 function TIC()
